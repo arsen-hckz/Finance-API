@@ -1,0 +1,28 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: finance_db
+    restart: always
+    env_file: .env
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  web: # <--- MUST be exactly aligned with 'db'
+    build: .
+    container_name: finance_api
+    env_file: .env
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes: 
+  mysql_data:
