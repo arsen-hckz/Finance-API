@@ -1,5 +1,9 @@
+import re
+
+from django.db import transaction
 from django.shortcuts import render
 from rest_framework import generics,permissions
+from rest_framework.exceptions import ValidationError
 from .serializers import TransactionSeriliazer,AccountSerializer,CategorySerializer
 from .models import Account,Transaction,Category
 
@@ -29,10 +33,14 @@ class TransactionView(generics.ListCreateAPIView):
         queryset = Transaction.objects.filter(account__user = user)
         category = self.request.query_params.get('category')
         if category:
-            return queryset.filter(category_id = 'category')
+            if not re.fullmatch(r'\d{1,18}', category):
+                raise ValidationError({'category': 'Must be a category id.'})
+            return queryset.filter(category_id = int(category))
         return queryset
         
     def perform_create(self,serializer):
-        serializer.save()
+        # The transaction row and the balance update (signal) succeed or fail together.
+        with transaction.atomic():
+            serializer.save()
 
 
