@@ -33,7 +33,7 @@ MYSQL_ROOT_PASSWORD=your_secure_password
 MYSQL_HOST=db
 MYSQL_PORT=3306
 SECRET_KEY=your_django_secret_key
-
+```
 
 ### 3. Build, Launch, and Initialize
 Run the following commands to build the containers, apply the database schema, and set up your administrative access:
@@ -45,11 +45,14 @@ docker-compose up --build -d
 # Wait 10-15 seconds for MySQL to initialize, then run migrations and create admin
 docker-compose exec web python manage.py migrate
 docker-compose exec web python manage.py createsuperuser
+```
 
+## Endpoints
 
-Method	Endpoint	Description
-POST	/auth/users/	Register a new user
-POST	/auth/jwt/create/	Login & receive JWT tokens
-GET	/api/accounts/	List all user accounts & balances
-POST	/api/transactions/	Create transaction (triggers balance update)
-GET	/api/categories/	List expense/income categories
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/auth/users/` | Register a new user |
+| POST | `/auth/jwt/create/` | Login & receive JWT tokens |
+| GET | `/api/accounts/` | List all user accounts & balances |
+| POST | `/api/transactions/` | Create transaction (triggers balance update) |
+| GET | `/api/categories/` | List expense/income categories |
